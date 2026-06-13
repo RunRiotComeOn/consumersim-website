@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ConsumerSim Confidence Forecasts</title>
+    <meta
+      name="description"
+      content="ConsumerSim weekly-updated consumer confidence forecast benchmark for US, EU27, and Japan."
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="wordmark" href="#top" aria-label="ConsumerSim home">
+        <img class="brand-icon" src="./assets/consumersim-icon.svg" alt="" aria-hidden="true" />
+        <span>ConsumerSim</span>
+      </a>
+      <nav aria-label="Primary navigation">
+        <a href="#leaderboard">Leaderboard</a>
+        <a href="#regional">Regional</a>
+        <a href="#updates">Updates</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="hero" aria-labelledby="page-title">
+        <div class="hero-copy">
+          <p class="eyebrow">Consumer confidence forecasting</p>
+          <h1 id="page-title">ConsumerSim Confidence Forecasts</h1>
+          <p class="summary">
+            Weekly-updated consumer confidence forecasts for three representative markets:
+            US, EU27, and Japan.
+          </p>
+        </div>
+        <div class="hero-panel" aria-label="Benchmark status">
+          <div>
+            <span class="panel-label">Last Update</span>
+            <strong id="generated-at">--</strong>
+          </div>
+          <div>
+            <span class="panel-label">Cadence</span>
+            <strong id="update-cadence">--</strong>
+          </div>
+          <div>
+            <span class="panel-label">Next Update</span>
+            <strong id="next-update">--</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="metric-strip" aria-label="Regional summary" id="regional-cards"></section>
+
+      <section class="prediction-section" aria-labelledby="prediction-title">
+        <div class="section-head compact">
+          <div>
+            <p class="eyebrow">Monthly predictions</p>
+            <h2 id="prediction-title">Latest monthly forecast</h2>
+          </div>
+          <p class="table-context">US, EU27, and Japan are shown as the three regional representatives.</p>
+        </div>
+        <div class="prediction-grid" id="monthly-predictions"></div>
+      </section>
+
+      <section class="prediction-section weekly-section" aria-labelledby="weekly-title">
+        <div class="section-head compact">
+          <div>
+            <p class="eyebrow">Weekly nowcast</p>
+            <h2 id="weekly-title">US weekly consumer sentiment path</h2>
+          </div>
+          <p class="table-context" id="weekly-context">--</p>
+        </div>
+        <div class="weekly-layout">
+          <div class="weekly-chart" aria-label="Weekly nowcast chart">
+            <canvas id="weekly-chart" height="260"></canvas>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Week</th>
+                  <th scope="col">Cutoff</th>
+                  <th scope="col">ICS</th>
+                  <th scope="col">ICC</th>
+                  <th scope="col">ICE</th>
+                </tr>
+              </thead>
+              <tbody id="weekly-body"></tbody>
+            </table>
+          </div>
+        </div>
+        <p class="weekly-note" id="weekly-note"></p>
+      </section>
+
+      <section class="section-head" id="leaderboard">
+        <div>
+          <p class="eyebrow">Benchmark table</p>
+          <h2>Regional leaderboard</h2>
+        </div>
+        <div class="segmented" role="tablist" aria-label="Choose region" id="region-tabs"></div>
+      </section>
+
+      <section class="dashboard-grid">
+        <article class="chart-shell" aria-labelledby="chart-title">
+          <div class="chart-header">
+            <div>
+              <p class="eyebrow" id="active-market">--</p>
+              <h2 id="chart-title">Forecast vs actual</h2>
+            </div>
+            <div class="legend" aria-label="Chart legend">
+              <span><i class="forecast-dot"></i> Forecast</span>
+              <span><i class="actual-dot"></i> Actual</span>
+            </div>
+          </div>
+          <canvas id="forecast-chart" height="340" aria-label="Forecast and actual line chart"></canvas>
+        </article>
+
+        <aside class="region-brief" id="regional" aria-labelledby="region-title">
+          <p class="eyebrow">Selected region</p>
+          <h2 id="region-title">--</h2>
+          <p id="region-headline" class="brief-headline">--</p>
+          <dl class="brief-stats">
+            <div>
+              <dt>MAE</dt>
+              <dd id="brief-mae">--</dd>
+            </div>
+            <div>
+              <dt>RMSE</dt>
+              <dd id="brief-rmse">--</dd>
+            </div>
+            <div>
+              <dt>Pearson r</dt>
+              <dd id="brief-pearson">--</dd>
+            </div>
+          </dl>
+          <div class="latest-box">
+            <span class="panel-label">Latest backtest point</span>
+            <strong id="brief-latest">--</strong>
+          </div>
+          <ul class="notes" id="region-notes"></ul>
+        </aside>
+      </section>
+
+      <section class="table-section" aria-labelledby="table-title">
+        <div class="section-head compact">
+          <div>
+            <p class="eyebrow">Ranked by MAE</p>
+            <h2 id="table-title">Method comparison</h2>
+          </div>
+          <p class="table-context" id="table-context">--</p>
+        </div>
+        <p class="expand-hint">Hover over the table to reveal additional methods.</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Rank</th>
+                <th scope="col">Method</th>
+                <th scope="col">Family</th>
+                <th scope="col">Months</th>
+                <th scope="col">MAE</th>
+                <th scope="col">RMSE</th>
+                <th scope="col">Pearson</th>
+              </tr>
+            </thead>
+            <tbody id="leaderboard-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="updates" id="updates" aria-labelledby="updates-title">
+        <div>
+          <p class="eyebrow">Refresh protocol</p>
+          <h2 id="updates-title">Weekly update cycle</h2>
+        </div>
+        <ol class="update-list">
+          <li>
+            <strong>Monday refresh</strong>
+            <span>pull latest survey releases, market context, and macro inputs.</span>
+          </li>
+          <li>
+            <strong>Run ConsumerSim</strong>
+            <span>update regional predictions and compare against persistence baselines.</span>
+          </li>
+          <li>
+            <strong>Publish benchmark</strong>
+            <span>regenerate this static site data file and redeploy.</span>
+          </li>
+        </ol>
+      </section>
+    </main>
+
+    <footer>
+      <span>ConsumerSim Confidence Forecasts</span>
+      <span class="lab-credit">
+        <img src="./assets/fudan-logo.svg" alt="Fudan University logo" />
+        Made by Fudan DISC Lab
+      </span>
+    </footer>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
