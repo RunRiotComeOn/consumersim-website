@@ -6,7 +6,7 @@
     <title>ConsumerSim Confidence Forecasts</title>
     <meta
       name="description"
-      content="ConsumerSim weekly-updated consumer confidence forecast benchmark for US, EU27, and Japan."
+      content="ConsumerSim weekly-updated consumer confidence forecasts for US, EU27, and Japan."
     />
     <link rel="stylesheet" href="./styles.css" />
   </head>
@@ -17,9 +17,9 @@
         <span>ConsumerSim</span>
       </a>
       <nav aria-label="Primary navigation">
-        <a href="#leaderboard">Leaderboard</a>
-        <a href="#regional">Regional</a>
-        <a href="#updates">Updates</a>
+        <a href="#latest">Latest</a>
+        <a href="#history">History</a>
+        <a href="#updates">Update Cycle</a>
       </nav>
     </header>
 
@@ -27,75 +27,116 @@
       <section class="hero" aria-labelledby="page-title">
         <div class="hero-copy">
           <p class="eyebrow">Consumer confidence forecasting</p>
-          <h1 id="page-title">ConsumerSim Confidence Forecasts</h1>
+          <h1 id="page-title" data-title="ConsumerSim Confidence Forecasts">ConsumerSim Confidence Forecasts</h1>
           <p class="summary">
             Weekly-updated consumer confidence forecasts for three representative markets:
             US, EU27, and Japan.
           </p>
-        </div>
-        <div class="hero-panel" aria-label="Benchmark status">
-          <div>
-            <span class="panel-label">Last Update</span>
-            <strong id="generated-at">--</strong>
-          </div>
-          <div>
-            <span class="panel-label">Cadence</span>
-            <strong id="update-cadence">--</strong>
-          </div>
-          <div>
-            <span class="panel-label">Next Update</span>
-            <strong id="next-update">--</strong>
+          <p class="typing-status" id="typing-status" aria-live="polite"></p>
+          <div class="hero-panel" aria-label="Forecast status">
+            <div>
+              <span class="panel-label">Last Update</span>
+              <strong id="generated-at">--</strong>
+            </div>
+            <div>
+              <span class="panel-label">Next Update</span>
+              <strong id="next-update">--</strong>
+            </div>
           </div>
         </div>
+        <aside class="map-card" aria-labelledby="map-title">
+          <div class="map-card-head">
+            <p class="eyebrow">Coverage map</p>
+            <h2 id="map-title">Three regional representatives</h2>
+            <p class="map-card-note">Latest snapshot values are pinned to each representative market.</p>
+          </div>
+          <svg class="world-map" viewBox="0 0 760 390" role="img" aria-label="World map showing US, EU27, and Japan coverage">
+            <defs>
+              <linearGradient id="ocean-wash" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#f9fbf8"/>
+                <stop offset="0.52" stop-color="#fff7ef"/>
+                <stop offset="1" stop-color="#f2f6f0"/>
+              </linearGradient>
+              <linearGradient id="land-wash" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#f0eee7"/>
+                <stop offset="1" stop-color="#dedbd2"/>
+              </linearGradient>
+              <filter id="map-soft-shadow" x="-15%" y="-15%" width="130%" height="130%">
+                <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#2c281f" flood-opacity="0.12"/>
+              </filter>
+              <filter id="pin-glow" x="-80%" y="-80%" width="260%" height="260%">
+                <feDropShadow dx="0" dy="0" stdDeviation="8" flood-color="#d64f2a" flood-opacity="0.35"/>
+              </filter>
+            </defs>
+            <rect class="map-ocean" x="14" y="18" width="732" height="354" rx="26"/>
+            <image class="map-land-svg" href="./assets/world-map.svg" x="18" y="24" width="724" height="330" preserveAspectRatio="xMidYMid meet"/>
+            <path class="map-arc map-arc-back" d="M174 126C267 70 348 78 402 111S566 140 670 133"/>
+            <path class="map-arc" d="M174 126C272 82 345 86 402 111S563 131 670 133"/>
+            <g class="map-pin marker-us" style="--delay: 0s">
+              <circle class="map-pulse" cx="174" cy="126" r="26"/>
+              <circle class="map-node" cx="174" cy="126" r="13"/>
+              <rect class="map-label-card" x="119" y="154" width="110" height="58" rx="14"/>
+              <text class="map-code" x="174" y="177">US</text>
+              <text class="map-value" id="map-us-value" x="174" y="200">--</text>
+            </g>
+            <g class="map-pin marker-eu" style="--delay: .45s">
+              <circle class="map-pulse" cx="402" cy="111" r="26"/>
+              <circle class="map-node" cx="402" cy="111" r="13"/>
+              <rect class="map-label-card" x="344" y="135" width="116" height="58" rx="14"/>
+              <text class="map-code" x="402" y="158">EU27</text>
+              <text class="map-value" id="map-eu-value" x="402" y="181">--</text>
+            </g>
+            <g class="map-pin marker-jp" style="--delay: .9s">
+              <circle class="map-pulse" cx="670" cy="133" r="26"/>
+              <circle class="map-node" cx="670" cy="133" r="13"/>
+              <rect class="map-label-card" x="624" y="160" width="92" height="58" rx="14"/>
+              <text class="map-code" x="670" y="183">JP</text>
+              <text class="map-value" id="map-jp-value" x="670" y="206">--</text>
+            </g>
+          </svg>
+        </aside>
       </section>
 
-      <section class="metric-strip" aria-label="Regional summary" id="regional-cards"></section>
-
-      <section class="prediction-section" aria-labelledby="prediction-title">
+      <section class="prediction-section weekly-section explorer-section" id="latest" aria-labelledby="weekly-title">
         <div class="section-head compact">
           <div>
-            <p class="eyebrow">Monthly predictions</p>
-            <h2 id="prediction-title">Latest monthly forecast</h2>
-          </div>
-          <p class="table-context">US, EU27, and Japan are shown as the three regional representatives.</p>
-        </div>
-        <div class="prediction-grid" id="monthly-predictions"></div>
-      </section>
-
-      <section class="prediction-section weekly-section" aria-labelledby="weekly-title">
-        <div class="section-head compact">
-          <div>
-            <p class="eyebrow">Weekly nowcast</p>
-            <h2 id="weekly-title">US weekly consumer sentiment path</h2>
+            <p class="eyebrow">Forecast explorer</p>
+            <h2 id="weekly-title">Sentiment path switchboard</h2>
           </div>
           <p class="table-context" id="weekly-context">--</p>
         </div>
-        <div class="weekly-layout">
-          <div class="weekly-chart" aria-label="Weekly nowcast chart">
+
+        <div class="switchbar" aria-label="Forecast view controls">
+          <div class="segmented compact-toggle" role="tablist" aria-label="Choose forecast cadence" id="cadence-tabs">
+            <button type="button" role="tab" data-cadence="weekly" aria-selected="true">Weekly</button>
+            <button type="button" role="tab" data-cadence="monthly" aria-selected="false">Monthly</button>
+          </div>
+          <div class="segmented compact-toggle" role="tablist" aria-label="Choose forecast region" id="forecast-region-tabs">
+            <button type="button" role="tab" data-forecast-region="us" aria-selected="true">US</button>
+            <button type="button" role="tab" data-forecast-region="eu" aria-selected="false">EU27</button>
+            <button type="button" role="tab" data-forecast-region="jp" aria-selected="false">Japan</button>
+          </div>
+        </div>
+
+        <div class="weekly-layout" id="forecast-layout">
+          <div class="weekly-chart" aria-label="Forecast path chart">
             <canvas id="weekly-chart" height="260"></canvas>
           </div>
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th scope="col">Week</th>
-                  <th scope="col">Cutoff</th>
-                  <th scope="col">ICS</th>
-                  <th scope="col">ICC</th>
-                  <th scope="col">ICE</th>
-                </tr>
-              </thead>
-              <tbody id="weekly-body"></tbody>
-            </table>
+          <div class="news-panel" aria-label="Latest forecast drivers">
+            <div class="news-panel-head">
+              <span>Latest drivers</span>
+              <strong id="forecast-news-period">--</strong>
+            </div>
+            <div class="news-list" id="forecast-news-list"></div>
           </div>
         </div>
         <p class="weekly-note" id="weekly-note"></p>
       </section>
 
-      <section class="section-head" id="leaderboard">
+      <section class="section-head" id="history">
         <div>
-          <p class="eyebrow">Benchmark table</p>
-          <h2>Regional leaderboard</h2>
+          <p class="eyebrow">Historical results</p>
+          <h2>Historical prediction results</h2>
         </div>
         <div class="segmented" role="tablist" aria-label="Choose region" id="region-tabs"></div>
       </section>
@@ -113,9 +154,10 @@
             </div>
           </div>
           <canvas id="forecast-chart" height="340" aria-label="Forecast and actual line chart"></canvas>
+          <div class="chart-tooltip" id="chart-tooltip" hidden></div>
         </article>
 
-        <aside class="region-brief" id="regional" aria-labelledby="region-title">
+        <aside class="region-brief" aria-labelledby="region-title">
           <p class="eyebrow">Selected region</p>
           <h2 id="region-title">--</h2>
           <p id="region-headline" class="brief-headline">--</p>
@@ -133,23 +175,23 @@
               <dd id="brief-pearson">--</dd>
             </div>
           </dl>
-          <div class="latest-box">
-            <span class="panel-label">Latest backtest point</span>
-            <strong id="brief-latest">--</strong>
+          <div class="region-outline" aria-hidden="true">
+            <img id="region-outline-map" class="region-outline-map" src="./assets/region-us.svg" alt="">
           </div>
-          <ul class="notes" id="region-notes"></ul>
         </aside>
       </section>
 
       <section class="table-section" aria-labelledby="table-title">
         <div class="section-head compact">
           <div>
-            <p class="eyebrow">Ranked by MAE</p>
+            <p class="eyebrow">Historical methods</p>
             <h2 id="table-title">Method comparison</h2>
           </div>
-          <p class="table-context" id="table-context">--</p>
         </div>
-        <p class="expand-hint">Hover over the table to reveal additional methods.</p>
+        <p class="expand-hint">
+          <span id="table-context">--</span>
+          <span>Hover over the table to reveal additional methods.</span>
+        </p>
         <div class="table-wrap">
           <table>
             <thead>
@@ -163,7 +205,7 @@
                 <th scope="col">Pearson</th>
               </tr>
             </thead>
-            <tbody id="leaderboard-body"></tbody>
+            <tbody id="historical-body"></tbody>
           </table>
         </div>
       </section>
@@ -183,7 +225,7 @@
             <span>update regional predictions and compare against persistence baselines.</span>
           </li>
           <li>
-            <strong>Publish benchmark</strong>
+            <strong>Publish update</strong>
             <span>regenerate this static site data file and redeploy.</span>
           </li>
         </ol>

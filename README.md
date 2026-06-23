@@ -1,6 +1,6 @@
 # ConsumerSim Confidence Forecasts Website
 
-Static benchmark website for weekly-updated consumer confidence forecasts across:
+Static website for weekly-updated consumer confidence forecasts across:
 
 - US: North America representative market
 - EU27: Europe representative market
