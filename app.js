@@ -292,7 +292,7 @@ function typeLoop(node, phrases) {
 
 function startTypingStatus() {
   typeLoop(els.typingStatus, [
-    "reading the latest 2026-06 CSV snapshot",
+    "reading the latest 2026-06 forecast snapshot",
     "plotting US, EU27, and Japan sentiment paths",
     "updating weekly nowcast signals"
   ]);
@@ -404,9 +404,9 @@ function renderForecastNews(region, cadence, fallbackPeriod) {
   if (!items.length) {
     els.forecastNewsList.innerHTML = `
       <article class="news-item empty-news">
-        <span>No CSV news rows</span>
+        <span>No latest driver notes</span>
         <h3>Drivers have not been added for this view.</h3>
-        <p>Add news driver rows to the site data file to update this panel.</p>
+        <p>Driver notes will appear after the next published update.</p>
       </article>
     `;
     return;
@@ -453,8 +453,8 @@ function renderUnavailableExplorer(region) {
   `;
   els.weeklyNote.textContent =
     activeForecastCadence === "monthly"
-      ? `${region.label} monthly rows will appear here once the regional monthly CSV records are added.`
-      : "Weekly rows will appear here once the regional weekly CSV records are added.";
+      ? `${region.label} monthly rows will appear here once the regional monthly forecast records are added.`
+      : "Weekly rows will appear here once the regional weekly forecast records are added.";
   explorerChartState = {
     points: [],
     emptyMessage: `${cadenceLabel} view not configured`
@@ -470,12 +470,12 @@ function renderWeeklyExplorer(region) {
   }
 
   els.weeklyTitle.textContent = `${region.label} weekly consumer sentiment path`;
-  els.weeklyContext.textContent = `${region.label}, May 2026 weeks 2-4 and June 2026 week 1. CSV-driven weekly nowcast slots.`;
+  els.weeklyContext.textContent = `${region.label}, May 2026 weeks 2-4 and June 2026 week 1. Weekly nowcast slots.`;
   renderForecastNews(region, "weekly", rows.at(-1)?.label);
   els.weeklyNote.textContent =
     activeForecastRegion === "us"
       ? "Illustrative weekly path based on the May ICS level: the late-May readings firm gradually, and the first June slot shows a modest continuation of that rebound."
-      : `${region.label} weekly path is shown from the same CSV forecast format for visual review.`;
+      : `${region.label} weekly path is shown from the same forecast format for visual review.`;
   explorerChartState = {
     points: rows.map((row) => ({ label: row.label, value: row.forecast })),
     emptyMessage: ""

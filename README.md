@@ -18,7 +18,7 @@ Then visit `http://localhost:4173`.
 
 ## Weekly Update
 
-The website reads all displayed page data from one CSV:
+The website reads all displayed page data from one structured data file:
 
 ```text
 data/consumersim_site_data.csv
@@ -37,4 +37,4 @@ The frontend automatically selects the latest `as_of` value. To preview an older
 http://localhost:4173/?as_of=2026-06
 ```
 
-Current source inputs are the local ConsumerSim result CSVs under `results_us`, `results_eu`, and `results_jp`, plus forecast rows added directly to the site CSV when a current month has not yet been released.
+Current source inputs are the local ConsumerSim result files under `results_us`, `results_eu`, and `results_jp`, plus forecast rows added directly to the site data file when a current month has not yet been released.
