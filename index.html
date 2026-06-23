@@ -18,6 +18,7 @@
       </a>
       <nav aria-label="Primary navigation">
         <a href="#latest">Latest</a>
+        <a href="#agents">Agents</a>
         <a href="#history">History</a>
         <a href="#updates">Update Cycle</a>
       </nav>
@@ -121,6 +122,7 @@
         <div class="weekly-layout" id="forecast-layout">
           <div class="weekly-chart" aria-label="Forecast path chart">
             <canvas id="weekly-chart" height="260"></canvas>
+            <div class="chart-tooltip compact-chart-tooltip" id="weekly-chart-tooltip" hidden></div>
           </div>
           <div class="news-panel" aria-label="Latest forecast drivers">
             <div class="news-panel-head">
@@ -131,6 +133,23 @@
           </div>
         </div>
         <p class="weekly-note" id="weekly-note"></p>
+      </section>
+
+      <section class="agent-section prediction-section" id="agents" aria-labelledby="agents-title">
+        <div class="section-head compact">
+          <div>
+            <p class="eyebrow">Respondent simulation</p>
+            <h2 id="agents-title">Synthetic agent profiles</h2>
+          </div>
+          <p class="table-context">Hover a state marker to inspect the profile and monthly response path.</p>
+        </div>
+        <div class="agent-layout">
+          <div class="agent-map-panel" aria-label="United States respondent map">
+            <img class="agent-us-map" src="./assets/us-agent-map.svg" alt="" aria-hidden="true" />
+            <div class="agent-pins" id="agent-pins"></div>
+          </div>
+          <aside class="agent-profile-panel" id="agent-profile-panel" aria-live="polite"></aside>
+        </div>
       </section>
 
       <section class="section-head" id="history">

@@ -3,6 +3,8 @@ let activeRegion = null;
 let activeForecastCadence = "weekly";
 let activeForecastRegion = "us";
 let explorerChartState = { points: [], emptyMessage: "" };
+let explorerHitTargets = [];
+let explorerHover = null;
 let chartHitTargets = [];
 let chartHover = null;
 
@@ -19,6 +21,7 @@ const els = {
   weeklyTitle: document.querySelector("#weekly-title"),
   weeklyContext: document.querySelector("#weekly-context"),
   weeklyChart: document.querySelector("#weekly-chart"),
+  weeklyChartTooltip: document.querySelector("#weekly-chart-tooltip"),
   forecastNewsPeriod: document.querySelector("#forecast-news-period"),
   forecastNewsList: document.querySelector("#forecast-news-list"),
   weeklyNote: document.querySelector("#weekly-note"),
@@ -36,7 +39,9 @@ const els = {
   briefPearson: document.querySelector("#brief-pearson"),
   regionOutlineMap: document.querySelector("#region-outline-map"),
   tableContext: document.querySelector("#table-context"),
-  historicalBody: document.querySelector("#historical-body")
+  historicalBody: document.querySelector("#historical-body"),
+  agentPins: document.querySelector("#agent-pins"),
+  agentProfilePanel: document.querySelector("#agent-profile-panel")
 };
 
 const regionOutlineViews = {
@@ -172,6 +177,40 @@ function buildData(rows) {
       };
     });
 
+  const agentPredictions = current
+    .filter((row) => row.record_type === "agent_monthly_prediction")
+    .sort(bySort)
+    .map((row) => ({
+      id: row.key,
+      period: row.period,
+      value: num(row.value) ?? num(row.forecast),
+      signal: row.signal
+    }));
+
+  const agentProfiles = current
+    .filter((row) => row.record_type === "agent_profile")
+    .sort(bySort)
+    .map((row) => ({
+      id: row.key,
+      name: row.label,
+      state: row.market,
+      stateCode: row.period,
+      location: row.week_label,
+      age: num(row.cutoff_day),
+      segment: row.target,
+      education: row.method,
+      income: row.family,
+      household: row.prior_period,
+      summary: row.signal,
+      profile: row.interpretation,
+      status: row.status,
+      latest: num(row.value),
+      x: num(row.forecast),
+      y: num(row.actual),
+      note: row.note,
+      monthly: agentPredictions.filter((item) => item.id === row.key)
+    }));
+
   return {
     generatedAt: meta.generatedAt,
     nextUpdate: meta.nextUpdate,
@@ -214,6 +253,7 @@ function buildData(rows) {
         summary: row.interpretation,
         url: row.note
       })),
+    agentProfiles,
     regions
   };
 }
@@ -305,9 +345,101 @@ function renderMapValues() {
   });
 }
 
+function renderAgentDemo() {
+  if (!els.agentPins || !els.agentProfilePanel || !data.agentProfiles.length) return;
+  els.agentPins.innerHTML = data.agentProfiles
+    .map((agent, index) => {
+      const left = ((agent.x || 0) / 760) * 100;
+      const top = ((agent.y || 0) / 430) * 100;
+      return `
+        <button class="agent-pin ${index === 0 ? "active" : ""}" type="button" data-agent-id="${agent.id}"
+          style="--x: ${left.toFixed(2)}%; --y: ${top.toFixed(2)}%;" aria-label="${agent.name}, ${agent.state}">
+          <span class="agent-dot">${initials(agent.name)}</span>
+          <span class="agent-state">${agent.stateCode}</span>
+          <span class="agent-hover-card">
+            <strong>${agent.name}</strong>
+            <span>${agent.state} · age ${agent.age}</span>
+            <em>${agent.summary}</em>
+          </span>
+        </button>
+      `;
+    })
+    .join("");
+
+  els.agentPins.querySelectorAll(".agent-pin").forEach((button) => {
+    const setActive = () => setActiveAgent(button.dataset.agentId);
+    button.addEventListener("mouseenter", setActive);
+    button.addEventListener("focus", setActive);
+    button.addEventListener("click", () => {
+      pulseButton(button);
+      setActive();
+    });
+  });
+
+  renderAgentPanel(data.agentProfiles[0]);
+}
+
+function setActiveAgent(agentId) {
+  const agent = data.agentProfiles.find((item) => item.id === agentId);
+  if (!agent) return;
+  els.agentPins.querySelectorAll(".agent-pin").forEach((button) => {
+    button.classList.toggle("active", button.dataset.agentId === agentId);
+  });
+  renderAgentPanel(agent);
+}
+
+function renderAgentPanel(agent) {
+  const values = agent.monthly.map((item) => item.value).filter((value) => Number.isFinite(value));
+  const min = Math.min(...values);
+  const max = Math.max(...values);
+  const spread = max - min || 1;
+  els.agentProfilePanel.innerHTML = `
+    <div class="agent-panel-top">
+      <p class="eyebrow">${agent.state} sample</p>
+      <h3>${agent.name}</h3>
+      <strong>${fmt(agent.latest, 1)}</strong>
+    </div>
+    <p class="agent-summary">${agent.summary}</p>
+    <dl class="agent-profile-grid">
+      <div><dt>Age</dt><dd>${agent.age}</dd></div>
+      <div><dt>Location</dt><dd>${agent.location}</dd></div>
+      <div><dt>Status</dt><dd>${agent.status}</dd></div>
+      <div><dt>Education</dt><dd>${agent.education}</dd></div>
+      <div><dt>Income</dt><dd>${agent.income}</dd></div>
+      <div><dt>Household</dt><dd>${agent.household}</dd></div>
+    </dl>
+    <p class="agent-profile-copy">${agent.profile}</p>
+    <div class="agent-monthly-list" aria-label="${agent.name} monthly predicted survey responses">
+      ${agent.monthly
+        .map((point) => {
+          const width = 18 + ((point.value - min) / spread) * 82;
+          return `
+            <div class="agent-month">
+              <span>${point.period}</span>
+              <i><b style="width: ${width.toFixed(1)}%;"></b></i>
+              <strong>${fmt(point.value, 1)}</strong>
+            </div>
+          `;
+        })
+        .join("")}
+    </div>
+    <small>${agent.note}</small>
+  `;
+}
+
+function initials(name) {
+  return text(name)
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0])
+    .join("")
+    .toUpperCase();
+}
+
 function setupReveal() {
   const targets = document.querySelectorAll(
-    ".prediction-section, .section-head, .dashboard-grid, .table-section, .updates, .map-card"
+    ".prediction-section, .section-head, .dashboard-grid, .table-section, .updates, .map-card, .agent-section"
   );
   targets.forEach((target) => target.classList.add("reveal"));
 
@@ -353,6 +485,7 @@ function createForecastControls() {
   els.cadenceTabs.querySelectorAll("button").forEach((button) => {
     button.addEventListener("click", () => {
       pulseButton(button);
+      clearExplorerTooltip(false);
       activeForecastCadence = button.dataset.cadence;
       renderForecastExplorer();
     });
@@ -361,6 +494,7 @@ function createForecastControls() {
   els.forecastRegionTabs.querySelectorAll("button").forEach((button) => {
     button.addEventListener("click", () => {
       pulseButton(button);
+      clearExplorerTooltip(false);
       activeForecastRegion = button.dataset.forecastRegion;
       renderForecastExplorer();
     });
@@ -776,7 +910,9 @@ function drawExplorerChart() {
   ctx.clearRect(0, 0, width, height);
 
   const rows = explorerChartState.points.filter((row) => Number.isFinite(row.value));
+  explorerHitTargets = [];
   if (rows.length < 2) {
+    clearExplorerTooltip(false);
     ctx.fillStyle = "#5f5f5f";
     ctx.font = "13px Consolas, monospace";
     ctx.textAlign = "center";
@@ -811,8 +947,16 @@ function drawExplorerChart() {
   }
 
   const forecastPoints = rows.map((row, index) => [xFor(index), yFor(row.value)]);
+  explorerHitTargets = rows.map((row, index) => ({
+    index,
+    label: row.label,
+    value: row.value,
+    x: xFor(index),
+    y: yFor(row.value)
+  }));
   drawLine(ctx, forecastPoints, "#d64f2a", 2.8);
   drawPoints(ctx, forecastPoints, "#d64f2a");
+  drawExplorerHoverPoint(ctx);
 
   ctx.fillStyle = "#5f5f5f";
   ctx.textAlign = "center";
@@ -820,6 +964,82 @@ function drawExplorerChart() {
   rows.forEach((row, index) => {
     ctx.fillText(row.label, xFor(index), pad.top + plotH + 14);
   });
+}
+
+function drawExplorerHoverPoint(ctx) {
+  if (!explorerHover) return;
+  const target = explorerHitTargets.find((item) => item.index === explorerHover.index);
+  if (!target) return;
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(target.x, target.y, 7.5, 0, Math.PI * 2);
+  ctx.fillStyle = "rgba(255, 253, 248, 0.94)";
+  ctx.fill();
+  ctx.lineWidth = 2.5;
+  ctx.strokeStyle = "#d64f2a";
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(target.x, target.y, 3.8, 0, Math.PI * 2);
+  ctx.fillStyle = "#d64f2a";
+  ctx.fill();
+  ctx.restore();
+}
+
+function setupExplorerTooltip() {
+  els.weeklyChart.addEventListener("pointermove", handleExplorerPointerMove);
+  els.weeklyChart.addEventListener("pointerleave", () => clearExplorerTooltip());
+}
+
+function handleExplorerPointerMove(event) {
+  if (!explorerHitTargets.length) return;
+  const rect = els.weeklyChart.getBoundingClientRect();
+  const x = event.clientX - rect.left;
+  const y = event.clientY - rect.top;
+  const nearest = explorerHitTargets.reduce((best, target) => {
+    const distance = Math.hypot(target.x - x, target.y - y);
+    return !best || distance < best.distance ? { target, distance } : best;
+  }, null);
+
+  if (!nearest || nearest.distance > 16) {
+    clearExplorerTooltip();
+    return;
+  }
+
+  if (!explorerHover || explorerHover.index !== nearest.target.index) {
+    explorerHover = { index: nearest.target.index };
+    drawExplorerChart();
+  }
+  showExplorerTooltip(nearest.target);
+}
+
+function showExplorerTooltip(target) {
+  els.weeklyChartTooltip.innerHTML = `
+    <div class="tooltip-period">${target.label}</div>
+    <div class="tooltip-row active">
+      <span>Forecast</span>
+      <b>${valueLabel(target.value)}</b>
+    </div>
+  `;
+  els.weeklyChartTooltip.hidden = false;
+
+  const canvasBox = els.weeklyChart.getBoundingClientRect();
+  const shellBox = els.weeklyChart.parentElement.getBoundingClientRect();
+  const tooltipWidth = els.weeklyChartTooltip.offsetWidth || 142;
+  const tooltipHeight = els.weeklyChartTooltip.offsetHeight || 62;
+  const rawLeft = canvasBox.left - shellBox.left + target.x + 12;
+  const rawTop = canvasBox.top - shellBox.top + target.y - tooltipHeight - 10;
+  const maxLeft = shellBox.width - tooltipWidth - 10;
+  const maxTop = shellBox.height - tooltipHeight - 10;
+  els.weeklyChartTooltip.style.left = `${Math.max(10, Math.min(rawLeft, maxLeft))}px`;
+  els.weeklyChartTooltip.style.top = `${Math.max(10, Math.min(rawTop, maxTop))}px`;
+}
+
+function clearExplorerTooltip(redraw = true) {
+  if (!els.weeklyChartTooltip) return;
+  const hadHover = !!explorerHover || !els.weeklyChartTooltip.hidden;
+  explorerHover = null;
+  els.weeklyChartTooltip.hidden = true;
+  if (redraw && hadHover) drawExplorerChart();
 }
 
 function drawLine(ctx, points, color, width) {
@@ -865,6 +1085,8 @@ async function init() {
   createTabs();
   createForecastControls();
   setupChartTooltip();
+  setupExplorerTooltip();
+  renderAgentDemo();
   renderForecastExplorer();
   render();
 }
