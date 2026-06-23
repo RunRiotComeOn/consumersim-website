@@ -464,6 +464,14 @@ h2 {
   border-radius: 24px;
 }
 
+.history-section {
+  padding: 28px;
+}
+
+.history-head {
+  align-items: center;
+}
+
 .prediction-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));

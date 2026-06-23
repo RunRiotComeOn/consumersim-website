@@ -71,28 +71,28 @@
             </defs>
             <rect class="map-ocean" x="14" y="18" width="732" height="354" rx="26"/>
             <image class="map-land-svg" href="./assets/world-map.svg" x="18" y="24" width="724" height="330" preserveAspectRatio="xMidYMid meet"/>
-            <path class="map-arc map-arc-back" d="M190 150C282 88 356 82 424 125S558 151 657 131"/>
-            <path class="map-arc" d="M190 150C282 92 356 88 424 125S558 144 657 131"/>
+            <path class="map-arc map-arc-back" d="M218 152C305 92 382 91 456 136S554 155 632 142"/>
+            <path class="map-arc" d="M218 152C305 96 382 96 456 136S554 150 632 142"/>
             <g class="map-pin marker-us" style="--delay: 0s">
-              <circle class="map-pulse" cx="190" cy="150" r="26"/>
-              <circle class="map-node" cx="190" cy="150" r="13"/>
-              <rect class="map-label-card" x="135" y="178" width="110" height="58" rx="14"/>
-              <text class="map-code" x="190" y="201">US</text>
-              <text class="map-value" id="map-us-value" x="190" y="224">--</text>
+              <circle class="map-pulse" cx="218" cy="152" r="26"/>
+              <circle class="map-node" cx="218" cy="152" r="13"/>
+              <rect class="map-label-card" x="163" y="180" width="110" height="58" rx="14"/>
+              <text class="map-code" x="218" y="203">US</text>
+              <text class="map-value" id="map-us-value" x="218" y="226">--</text>
             </g>
             <g class="map-pin marker-eu" style="--delay: .45s">
-              <circle class="map-pulse" cx="424" cy="125" r="26"/>
-              <circle class="map-node" cx="424" cy="125" r="13"/>
-              <rect class="map-label-card" x="366" y="150" width="116" height="58" rx="14"/>
-              <text class="map-code" x="424" y="173">EU27</text>
-              <text class="map-value" id="map-eu-value" x="424" y="196">--</text>
+              <circle class="map-pulse" cx="456" cy="136" r="26"/>
+              <circle class="map-node" cx="456" cy="136" r="13"/>
+              <rect class="map-label-card" x="398" y="162" width="116" height="58" rx="14"/>
+              <text class="map-code" x="456" y="185">EU27</text>
+              <text class="map-value" id="map-eu-value" x="456" y="208">--</text>
             </g>
             <g class="map-pin marker-jp" style="--delay: .9s">
-              <circle class="map-pulse" cx="657" cy="131" r="26"/>
-              <circle class="map-node" cx="657" cy="131" r="13"/>
-              <rect class="map-label-card" x="611" y="158" width="92" height="58" rx="14"/>
-              <text class="map-code" x="657" y="181">JP</text>
-              <text class="map-value" id="map-jp-value" x="657" y="204">--</text>
+              <circle class="map-pulse" cx="632" cy="142" r="26"/>
+              <circle class="map-node" cx="632" cy="142" r="13"/>
+              <rect class="map-label-card" x="586" y="169" width="92" height="58" rx="14"/>
+              <text class="map-code" x="632" y="192">JP</text>
+              <text class="map-value" id="map-jp-value" x="632" y="215">--</text>
             </g>
           </svg>
         </aside>
@@ -152,52 +152,54 @@
         </div>
       </section>
 
-      <section class="section-head" id="history">
-        <div>
-          <p class="eyebrow">Historical results</p>
-          <h2>Historical prediction results</h2>
+      <section class="prediction-section history-section" id="history" aria-labelledby="history-title">
+        <div class="section-head compact history-head">
+          <div>
+            <p class="eyebrow">Historical results</p>
+            <h2 id="history-title">Historical prediction results</h2>
+          </div>
+          <div class="segmented" role="tablist" aria-label="Choose region" id="region-tabs"></div>
         </div>
-        <div class="segmented" role="tablist" aria-label="Choose region" id="region-tabs"></div>
-      </section>
 
-      <section class="dashboard-grid">
-        <article class="chart-shell" aria-labelledby="chart-title">
-          <div class="chart-header">
-            <div>
-              <p class="eyebrow" id="active-market">--</p>
-              <h2 id="chart-title">Forecast vs actual</h2>
+        <div class="dashboard-grid">
+          <article class="chart-shell" aria-labelledby="chart-title">
+            <div class="chart-header">
+              <div>
+                <p class="eyebrow" id="active-market">--</p>
+                <h2 id="chart-title">Forecast vs actual</h2>
+              </div>
+              <div class="legend" aria-label="Chart legend">
+                <span><i class="forecast-dot"></i> Forecast</span>
+                <span><i class="actual-dot"></i> Actual</span>
+              </div>
             </div>
-            <div class="legend" aria-label="Chart legend">
-              <span><i class="forecast-dot"></i> Forecast</span>
-              <span><i class="actual-dot"></i> Actual</span>
-            </div>
-          </div>
-          <canvas id="forecast-chart" height="340" aria-label="Forecast and actual line chart"></canvas>
-          <div class="chart-tooltip" id="chart-tooltip" hidden></div>
-        </article>
+            <canvas id="forecast-chart" height="340" aria-label="Forecast and actual line chart"></canvas>
+            <div class="chart-tooltip" id="chart-tooltip" hidden></div>
+          </article>
 
-        <aside class="region-brief" aria-labelledby="region-title">
-          <p class="eyebrow">Selected region</p>
-          <h2 id="region-title">--</h2>
-          <p id="region-headline" class="brief-headline">--</p>
-          <dl class="brief-stats">
-            <div>
-              <dt>MAE</dt>
-              <dd id="brief-mae">--</dd>
+          <aside class="region-brief" aria-labelledby="region-title">
+            <p class="eyebrow">Selected region</p>
+            <h2 id="region-title">--</h2>
+            <p id="region-headline" class="brief-headline">--</p>
+            <dl class="brief-stats">
+              <div>
+                <dt>MAE</dt>
+                <dd id="brief-mae">--</dd>
+              </div>
+              <div>
+                <dt>RMSE</dt>
+                <dd id="brief-rmse">--</dd>
+              </div>
+              <div>
+                <dt>Pearson r</dt>
+                <dd id="brief-pearson">--</dd>
+              </div>
+            </dl>
+            <div class="region-outline" aria-hidden="true">
+              <img id="region-outline-map" class="region-outline-map" src="./assets/region-us.svg" alt="">
             </div>
-            <div>
-              <dt>RMSE</dt>
-              <dd id="brief-rmse">--</dd>
-            </div>
-            <div>
-              <dt>Pearson r</dt>
-              <dd id="brief-pearson">--</dd>
-            </div>
-          </dl>
-          <div class="region-outline" aria-hidden="true">
-            <img id="region-outline-map" class="region-outline-map" src="./assets/region-us.svg" alt="">
-          </div>
-        </aside>
+          </aside>
+        </div>
       </section>
 
       <section class="table-section" aria-labelledby="table-title">
